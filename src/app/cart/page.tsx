@@ -15,42 +15,45 @@ type Product = {
   image: string;
 };
 
-type WishlistItem = Product;
-
 const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity } = useCart();
   const { addToWishlist } = useWishlist();
   const router = useRouter();
 
-  const [isAddedToWishlist, setIsAddedToWishlist] = useState<boolean>(false);
+  const [couponCode, setCouponCode] = useState<string>("");
+  const [discount, setDiscount] = useState<number>(0);
+  const [isCouponApplied, setIsCouponApplied] = useState<boolean>(false);
+  const [couponError, setCouponError] = useState<string>("");
+
+  const validCoupons: Record<string, number> = {
+    "DISCOUNT10": 10,
+    "SAVE20": 20,
+  };
+
   const formatPrice = (price: string | number | undefined): string => {
     if (price === undefined || isNaN(Number(price))) {
-      return "$0.00"; 
+      return "$0.00";
     }
-    const numericPrice = Number(price);
-    return numericPrice.toFixed(2);
+    return `$${Number(price).toFixed(2)}`;
   };
 
-  const totalPrice = cart.reduce((total, product: Product) => {
-    return total + product.price * product.quantity;
-  }, 0);
-
-  const handleCheckout = (): void => {
-    router.push("/checkout");
-  };
+  const subtotal = cart.reduce((total, product: Product) => total + product.price * product.quantity, 0);
+  const total = subtotal - discount;
 
   const handleQuantityChange = (id: string, quantity: number): void => {
     if (quantity > 0) updateQuantity(id, quantity);
   };
 
-  const handleAddToWishlist = (product: Product): void => {
-    const wishlistItem: WishlistItem = { ...product };
-    addToWishlist(wishlistItem);
-    setIsAddedToWishlist(true);
-
-    setTimeout(() => {
-      setIsAddedToWishlist(false);
-    }, 3000);
+  const handleApplyCoupon = (): void => {
+    if (validCoupons[couponCode]) {
+      setDiscount((subtotal * validCoupons[couponCode]) / 100);
+      setIsCouponApplied(true);
+      setCouponError("");
+    } else {
+      setDiscount(0);
+      setIsCouponApplied(false);
+      setCouponError("Invalid coupon code");
+    }
   };
 
   useEffect(() => {
@@ -65,49 +68,22 @@ const CartPage: React.FC = () => {
         <h2 className="text-2xl md:text-3xl font-bold text-[#272343] mb-8">Bag</h2>
         {cart.length > 0 ? (
           cart.map((product: Product) => (
-            <div
-              key={product.id}
-              className="flex flex-col md:flex-row items-center justify-between mb-6 border-b pb-6"
-            >
+            <div key={product.id} className="flex flex-col md:flex-row items-center justify-between mb-6 border-b pb-6">
               <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6">
-                <Image
-                  src={product.image}
-                  alt={product.name}
-                  width={160}
-                  height={160}
-                  className="object-cover rounded"
-                />
+                <Image src={product.image} alt={product.name} width={160} height={160} className="object-cover rounded" />
                 <div className="text-center md:text-left">
                   <p className="text-lg font-bold mb-2">{product.name}</p>
-                  <p className="text-base font-bold mb-4">
-                    ${formatPrice(product.price)} x {product.quantity}
-                  </p>
+                  <p className="text-base font-bold mb-4">{formatPrice(product.price)} x {product.quantity}</p>
                   <div className="flex items-center justify-center md:justify-start space-x-4">
-                    <button
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full font-bold hover:bg-gray-300"
-                      onClick={() => handleQuantityChange(product.id, product.quantity - 1)}
-                    >
-                      -
-                    </button>
+                    <button className="w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300" onClick={() => handleQuantityChange(product.id, product.quantity - 1)}>-</button>
                     <span className="text-lg">{product.quantity}</span>
-                    <button
-                      className="w-8 h-8 flex items-center justify-center bg-gray-200 rounded-full font-bold hover:bg-gray-300"
-                      onClick={() => handleQuantityChange(product.id, product.quantity + 1)}
-                    >
-                      +
-                    </button>
+                    <button className="w-8 h-8 bg-gray-200 rounded-full hover:bg-gray-300" onClick={() => handleQuantityChange(product.id, product.quantity + 1)}>+</button>
                   </div>
                 </div>
               </div>
               <div className="flex items-center space-x-6 mt-4 md:mt-0">
-                <HeartIcon
-                  className="w-6 h-6 text-gray-500 hover:text-[#027b89] cursor-pointer"
-                  onClick={() => handleAddToWishlist(product)}
-                />
-                <TrashIcon
-                  className="w-6 h-6 text-red-500 hover:text-red-700 cursor-pointer"
-                  onClick={() => removeFromCart(product.id)}
-                />
+                <HeartIcon className="w-6 h-6 text-gray-500 hover:text-[#027b89] cursor-pointer" onClick={() => addToWishlist(product)} />
+                <TrashIcon className="w-6 h-6 text-red-500 hover:text-red-700 cursor-pointer" onClick={() => removeFromCart(product.id)} />
               </div>
             </div>
           ))
@@ -118,32 +94,44 @@ const CartPage: React.FC = () => {
 
       <aside className="bg-white shadow rounded-lg p-6 sticky top-20 h-fit">
         <h2 className="text-xl md:text-2xl font-semibold mb-6 text-[#272343]">Summary</h2>
-        {isAddedToWishlist && (
-          <div className="text-green-500 font-semibold mb-4 text-center">
-            Product successfully added to wishlist!
-          </div>
-        )}
+        
         <div className="flex justify-between text-sm mb-4">
           <span>Subtotal</span>
-          <span>${formatPrice(totalPrice)}</span>
+          <span>{formatPrice(subtotal)}</span>
         </div>
+        
+        <div className="flex justify-between text-sm mb-4">
+          <span>Discount</span>
+          <span>-{formatPrice(discount)}</span>
+        </div>
+        
         <div className="flex justify-between text-lg font-bold mb-4">
           <span>Total</span>
-          <span>${formatPrice(totalPrice)}</span>
+          <span>{formatPrice(total)}</span>
         </div>
+
         <div className="flex items-center space-x-2 mb-4">
-          <input
-            type="text"
-            placeholder="Enter coupon code"
-            className="w-full p-2 border rounded-lg"
+          <input 
+            type="text" 
+            placeholder="Enter coupon code" 
+            value={couponCode} 
+            onChange={(e) => setCouponCode(e.target.value)} 
+            className="flex-1 px-3 py-2 border rounded" 
           />
-          <button className="bg-[#029FAE] text-white py-2 px-4 rounded-lg font-semibold hover:bg-[#027b89]">
+          <button 
+            className="bg-[#029FAE] text-white px-4 py-2 rounded hover:bg-[#027b89]" 
+            onClick={handleApplyCoupon}
+          >
             Apply
           </button>
         </div>
-        <button
-          className="w-full bg-[#029FAE] text-white py-3 rounded-lg font-semibold hover:bg-[#027b89]"
-          onClick={handleCheckout}
+        
+        {couponError && <p className="text-red-500 mb-2">{couponError}</p>}
+        {isCouponApplied && <p className="text-green-500 mb-2">Coupon applied successfully!</p>}
+
+        <button 
+          className="w-full bg-[#029FAE] text-white py-3 rounded-lg font-semibold hover:bg-[#027b89]" 
+          onClick={() => router.push(`/checkout?amount=${total.toFixed(2)}`)}
         >
           Checkout
         </button>

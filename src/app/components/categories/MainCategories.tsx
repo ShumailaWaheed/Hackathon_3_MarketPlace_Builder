@@ -18,7 +18,7 @@ const CategoriesPage = async () => {
   const products: Product[] = await client.fetch(query);
 
   return (
-    <section className="relative w-full max-w-[1920px] bg-white mx-auto px-4">
+    <section className="relative w-full max-w-[1920px] bg-white mx-auto px-4 py-5">
       <div className="absolute bottom-20 transform -rotate-90 origin-left text-[#272343] font-bold lg:text-3xl md:text-xl text-xl ml-5 whitespace-nowrap">
         EXPLORE NEW AND POPULAR STYLES
       </div>

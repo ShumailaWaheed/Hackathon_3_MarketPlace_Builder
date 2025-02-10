@@ -51,7 +51,7 @@ const TopHeader = () => {
           </div>
 
           <Link
-            href="/faqs"
+            href="/faq"
             className="flex items-center space-x-2 cursor-pointer hover:text-gray-300"
           >
             <span className="text-sm font-normal font-inter">Faqs</span>

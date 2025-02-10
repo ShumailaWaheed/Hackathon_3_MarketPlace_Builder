@@ -36,7 +36,7 @@ const ProductDetailCard = ({ product }: { product: Product }) => {
           alt={product.title}
           width={300}
           height={300}
-          className="object-cover rounded-lg mb-4 w-full"
+          className="object-cover rounded-lg mb-4 w-full hover:scale-[1.03] transition-transform duration-300"
         />
       </Link>
       <div className="flex justify-between items-center">

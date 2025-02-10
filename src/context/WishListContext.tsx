@@ -50,7 +50,7 @@ export const WishlistProvider = ({ children }: { children: ReactNode }) => {
   const removeFromWishlist = (id: string) => {
     setWishlist((prev) => {
       const updatedWishlist = prev.filter((item) => item.id !== id);
-      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist)); // Save to localStorage
+      localStorage.setItem("wishlist", JSON.stringify(updatedWishlist)); 
       return updatedWishlist;
     });
   };

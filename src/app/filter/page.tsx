@@ -43,24 +43,19 @@ export default async function ShopProducts({ searchParams }: { searchParams: { p
 
   const filtered = displayedProducts.filter(product => (product.inventory ?? 0) > 0);
 
-
   return (
     <section className="w-full max-w-[1920px] bg-white mx-auto py-10 px-4">
-      <div className="flex gap-6">
-        <div className="w-1/4 sticky top-20">
+      <div className="flex flex-col sm:flex-row gap-6">
+        <div className="w-full sm:w-1/4 mb-6 sm:mb-0 sm:sticky sm:top-20">
           <ProductFilters categories={categories} />
         </div>
-        <div className="w-3/4">
+          
+        <div className="w-full sm:w-3/4">
           {filtered.length > 0 ? (
             <>
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 {filtered.map((product) => (
                   <div key={product._id} className="relative">
-                    {product.badge && (
-                      <div className="absolute top-2 left-2 text-white px-4 py-1 text-sm font-semibold rounded-lg z-10 bg-green-500">
-                        {product.badge}
-                      </div>
-                    )}
                     <ProductCard product={product} />
                   </div>
                 ))}

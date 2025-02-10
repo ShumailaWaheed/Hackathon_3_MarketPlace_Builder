@@ -1,8 +1,8 @@
-"use client"
+"use client";
 
 import { FC, useState } from "react";
 import ReactSlider from "react-slider";
-import { RotateCcw } from "lucide-react";
+import { RotateCcw, Filter } from "lucide-react";
 
 interface ProductFiltersProps {
   categories: string[];
@@ -21,9 +21,12 @@ const ProductFilters: FC<ProductFiltersProps> = ({ categories }) => {
   };
 
   return (
-    <div className="sticky top-4 bg-white p-6 rounded-lg shadow-md w-full max-w-xs">
-      <h3 className="text-xl font-semibold mb-6">Filter Products</h3>
-      
+    <div className="sticky top-4 bg-white p-6 rounded-lg shadow-md w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-xs">
+      <h3 className="text-xl font-semibold mb-6 flex items-center">
+        <Filter size={20} className="mr-2" />
+        Filter Products
+      </h3>
+
       {/* Category Filter */}
       <div className="mb-6">
         <h4 className="text-lg font-medium mb-2">Categories</h4>
@@ -46,7 +49,6 @@ const ProductFilters: FC<ProductFiltersProps> = ({ categories }) => {
         </ul>
       </div>
 
-      {/* Price Filter with Dual Slider */}
       <div className="mb-6">
         <h4 className="text-lg font-medium mb-2">Price Range</h4>
         <div className="flex items-center justify-between mb-2">
@@ -59,14 +61,13 @@ const ProductFilters: FC<ProductFiltersProps> = ({ categories }) => {
           max={1000}
           step={10}
           value={priceRange}
-          onChange={(range: number[]) => setPriceRange([range[0], range[1]])} // ✅ Fixed TypeScript Error
+          onChange={(range: number[]) => setPriceRange([range[0], range[1]])} 
           className="w-full h-2 bg-gray-300 rounded-lg relative"
           thumbClassName="w-5 h-5 bg-[#029FAE] rounded-full cursor-pointer shadow-md"
           trackClassName="bg-[#029FAE] h-2 rounded-lg"
         />
       </div>
 
-      {/* Reset Button with Icon */}
       <div className="flex justify-center">
         <button
           onClick={() => {

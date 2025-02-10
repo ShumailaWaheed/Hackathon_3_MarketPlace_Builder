@@ -28,7 +28,6 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
   return (
     <div className="relative bg-transparent group">
-      {/* Badge */}
       {product.badge && (
         <div
           className={`absolute top-2 left-2 text-white px-4 py-1 text-sm font-semibold rounded-lg z-10 ${getBadgeColor(
@@ -46,7 +45,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
           alt={product.title}
           layout="fill"
           objectFit="cover"
-          className="rounded-lg"
+          className="rounded-lg hover:scale-[1.03] transition-transform duration-300"
           priority={true}
         />
       </div>
@@ -71,14 +70,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
             )}
           </div>
         </div>
-
-        {/* Add to Cart Button */}
+        <Link href={`/products/${product._id}`} passHref>
         <button
-          className="w-[44px] h-[44px] bg-[#029FAE] rounded flex items-center justify-center group-hover:bg-[#027c74] transition-all duration-300 focus:outline-none"
+          className="w-[44px] h-[44px] bg-[#F0F2F3] rounded flex items-center justify-center group-hover:bg-[#029Fae] transition-all duration-300 focus:outline-none"
           aria-label="Add to Cart"
         >
-          <ShoppingCartIcon className="w-[29px] h-[29px] text-white group-hover:text-black" />
+          <ShoppingCartIcon className="w-[29px] h-[29px] text-black group-hover:text-black" />
         </button>
+        </Link>
       </div>
     </div>
   );

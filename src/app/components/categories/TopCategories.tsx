@@ -2,7 +2,7 @@ import Image from "next/image";
 import { client } from "@/sanity/lib/client";
 import { Product } from "@/type/product";
 
-const CategoriesPage = async () => {
+const TopCategoriesPage = async () => {
   const query = `*[_type == "categories"]{
     _id,
     title,
@@ -18,7 +18,7 @@ const CategoriesPage = async () => {
   const categories:Product[] = await client.fetch(query);
 
   return (
-    <section className="w-full h-screen max-w-[1920px] bg-white mx-auto py-20 px-4">
+    <section className="w-full max-w-[1920px] bg-white mx-auto py-20 px-4">
       <h2 className="lg:text-4xl md:text-3xl text-2xl font-bold text-[#272343] mb-6 text-center sm:text-left">
         Top Categories
       </h2>
@@ -46,5 +46,5 @@ const CategoriesPage = async () => {
   );
 };
 
-export default CategoriesPage;
+export default TopCategoriesPage;
 

@@ -11,11 +11,10 @@ interface ProductPageProps {
 }
 
 const ProductPage = async ({ params }: ProductPageProps) => {
-  // Fetching the main product by ID
   const product = await fetchProduct(params.id);
 
   if (!product) {
-    notFound(); // Redirect to 404 if product is not found
+    notFound(); 
   }
 
   
@@ -43,7 +42,6 @@ const ProductPage = async ({ params }: ProductPageProps) => {
 
   return (
     <div>
-      {/* Main Product Page */}
       <ProductPageClient product={product} featuredProducts={featuredProducts} />
     </div>
   );

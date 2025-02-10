@@ -3,14 +3,24 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
-import { client } from "@/sanity/lib/client";
 import Link from "next/link";
 import Image from "next/image";
 
 interface Suggestion {
-  title: string;
-  image: { asset: { url: string } };
+  name: string;
+  image: string;
 }
+
+const products: Suggestion[] = [
+  { name: "Library Stool Chair", image: "/images/product-01.png" },
+  { name: "Rose Lux ArmChair", image: "/images/product-02.png" },
+  { name: "Citru Edge", image: "/images/product-03.png" },
+  { name: "Ivory Charm", image: "/images/product-04.png" },
+  { name: "Gray Elegance", image: "/images/product-05.png" },
+  { name: "Nordic Spin", image: "/images/product-08.png" },
+  { name: "Library Stool Chair", image: "/images/product-09.png" },
+  { name: "Modren Cozy", image: "/images/product-01.png" }
+];
 
 const SearchBar = () => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -22,26 +32,11 @@ const SearchBar = () => {
     setSearchQuery(query);
 
     if (query.trim() !== "") {
-      const params: Record<string, string> = { query: `${query}*` };
-
-      client
-        .fetch(
-          `*[_type == "products" && title match $query]{
-            title,
-            image {
-              asset-> {
-                url
-              }
-            }
-          }`,
-          params
-        )
-        .then((results) => {
-          setSuggestions(results);
-        })
-        .catch((error) => {
-          console.error("Error fetching suggestions:", error);
-        });
+      // Filter products based on the search query
+      const filteredSuggestions = products.filter((product) =>
+        product.name.toLowerCase().includes(query.toLowerCase())
+      );
+      setSuggestions(filteredSuggestions);
     } else {
       setSuggestions([]);
     }
@@ -56,15 +51,15 @@ const SearchBar = () => {
   };
 
   const handleSuggestionClick = (suggestion: Suggestion) => {
-    setSearchQuery(suggestion.title);
+    setSearchQuery(suggestion.name);
     setSuggestions([]);
-    router.push(`/filter?query=${suggestion.title}`);
+    router.push(`/filter?query=${suggestion.name}`);
   };
 
   return (
     <form
       onSubmit={handleSearchSubmit}
-      className="relative flex-1 mx-4 flex sm:max-w-[400px] w-full"
+      className="relative flex-1 mx-4 flex sm:max-w-[400px] w-full z-20" // Ensure search bar is above other content
     >
       <input
         type="text"
@@ -84,7 +79,7 @@ const SearchBar = () => {
       </Link>
 
       {suggestions.length > 0 && (
-        <div className="absolute top-full left-0 w-full bg-white border border-gray-300 mt-1 rounded-lg shadow-lg z-10">
+        <div className="absolute top-full left-0 w-full bg-white border border-gray-300 mt-1 rounded-lg shadow-lg z-30"> {/* Ensure the dropdown is on top */}
           <ul>
             {suggestions.map((suggestion, index) => (
               <li
@@ -93,13 +88,13 @@ const SearchBar = () => {
                 onClick={() => handleSuggestionClick(suggestion)}
               >
                 <Image
-                  src={suggestion.image?.asset?.url || "/images/placeholder.png"}
-                  alt={suggestion.title}
+                  src={suggestion.image || "/images/placeholder.png"}
+                  alt={suggestion.name}
                   width={40}
                   height={40}
                   className="object-cover rounded-full"
                 />
-                <span>{suggestion.title}</span>
+                <span>{suggestion.name}</span>
               </li>
             ))}
           </ul>

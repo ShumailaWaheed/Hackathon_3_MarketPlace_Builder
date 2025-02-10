@@ -22,7 +22,7 @@ const Navbar = () => {
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);
 
-  if (!isClient) return null; 
+  if (!isClient) return null;
 
   return (
     <div className="border-t border-b border-gray-200">
@@ -77,6 +77,12 @@ const Navbar = () => {
                 {link.label}
               </Link>
             ))}
+            <Link
+              href="/contact"
+              className="text-sm font-medium text-[#272343] hover:text-[#029FAE]"
+            >
+              Contact
+            </Link>
           </div>
         </div>
       )}
